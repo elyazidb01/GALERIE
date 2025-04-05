@@ -1,0 +1,38 @@
+version: '3' 
+
+services:
+  app:
+    image: mon-laravel-app
+    container_name: laravel_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+    
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      - laravel_network
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  db:
+    image: mysql:8
+    container_name: laravel_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: galeriedb
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: secret
+    networks:
+      - laravel_network
+
+  
+
+networks:
+  laravel_network:
+    driver: bridge
